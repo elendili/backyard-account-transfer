@@ -20,11 +20,12 @@ dependencies {
     implementation 'io.quarkus:quarkus-arc'
     implementation 'io.quarkus:quarkus-jsonb:1.9.0.Final'
 //    implementation 'io.quarkus:quarkus-logging-json' // makes log messages in json format
-    implementation 'org.jboss.logmanager:log4j2-jboss-logmanager'
+
     implementation 'io.quarkus:quarkus-jdbc-h2:1.9.0.Final'
     implementation 'io.quarkus:quarkus-hibernate-orm:1.9.0.FinalÅ'
-
+// testing
     testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.rest-assured:rest-assured'
 }
 
 
