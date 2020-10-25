@@ -2,20 +2,13 @@ package transferaccounts;
 
 import io.agroal.api.AgroalDataSource;
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.RestAssured;
-import org.apache.http.HttpStatus;
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.wildfly.common.Assert;
 
 import javax.inject.Inject;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
+import java.math.BigInteger;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -44,9 +37,15 @@ public class SqlViaDataSourceTest {
         return out;
     }
 
-    static void addInAccountTable(AgroalDataSource defaultDataSource,String string) {
+    static BigInteger addInAccountTable(AgroalDataSource defaultDataSource, String string) {
         try (Connection con = defaultDataSource.getConnection()) {
-            con.prepareStatement("INSERT INTO Account VALUES "+string).executeUpdate();
+            PreparedStatement statement = con.prepareStatement("INSERT INTO Account (amount, name) VALUES " + string + ";\n", new String[]{"id"});
+            statement.executeUpdate();
+            ResultSet rs = statement.getGeneratedKeys();
+            if (rs.next()) {
+                return BigInteger.valueOf(rs.getInt(1));
+            }
+            return BigInteger.ZERO;
         } catch (SQLException throwables) {
             throw new RuntimeException(throwables);
         }
@@ -77,7 +76,7 @@ public class SqlViaDataSourceTest {
 
     @Test
     public void addGet() {
-        addInAccountTable(defaultDataSource,"(2, 32, 'ZZ')");
-        MatcherAssert.assertThat(getAccountTable().toString(),Matchers.containsString("ZZ"));
+        addInAccountTable(defaultDataSource, "(2, 32, 'ZZ')");
+        MatcherAssert.assertThat(getAccountTable().toString(), Matchers.containsString("ZZ"));
     }
 }

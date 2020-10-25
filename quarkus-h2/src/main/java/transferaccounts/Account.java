@@ -2,18 +2,22 @@ package transferaccounts;
 
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import java.math.BigInteger;
 import java.util.Objects;
 
 @Entity
 public class Account {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    public int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public BigInteger id;
     public String name;
     public long amount;
 
-    public Account(){
+    public Account() {
     }
 
     @JsonbCreator
