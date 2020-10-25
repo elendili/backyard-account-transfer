@@ -9,4 +9,6 @@ pluginManagement {
     }
 }
 rootProject.name = 'train-project-account-transfer'
+include 'quarkus-h2'
+
 
