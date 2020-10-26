@@ -27,16 +27,6 @@ public class DbBean {
     @Inject
     private EntityManager em;
 
-    public DbBean() {
-        try {
-            org.h2.tools.Server.createTcpServer("-tcpAllowOthers").start();
-            logger.info("DB started");
-        } catch (SQLException throwables) {
-            throw new RuntimeException(throwables);
-        }
-    }
-
-
     @Transactional
     public BigInteger save(Account account) {
         em.persist(account);

@@ -37,7 +37,7 @@ public class SqlViaDataSourceTest {
         return out;
     }
 
-    static BigInteger addInAccountTable(AgroalDataSource defaultDataSource, String string) {
+    public static BigInteger addInAccountTable(AgroalDataSource defaultDataSource, String string) {
         try (Connection con = defaultDataSource.getConnection()) {
             PreparedStatement statement = con.prepareStatement("INSERT INTO Account (amount, name) VALUES " + string + ";\n", new String[]{"id"});
             statement.executeUpdate();
@@ -46,6 +46,15 @@ public class SqlViaDataSourceTest {
                 return BigInteger.valueOf(rs.getInt(1));
             }
             return BigInteger.ZERO;
+        } catch (SQLException throwables) {
+            throw new RuntimeException(throwables);
+        }
+    }
+
+    public static void cleanAccounts(AgroalDataSource defaultDataSource) {
+        try (Connection con = defaultDataSource.getConnection()) {
+            PreparedStatement statement = con.prepareStatement("TRUNCATE TABLE Account;\n");
+            statement.executeUpdate();
         } catch (SQLException throwables) {
             throw new RuntimeException(throwables);
         }
@@ -76,7 +85,7 @@ public class SqlViaDataSourceTest {
 
     @Test
     public void addGet() {
-        addInAccountTable(defaultDataSource, "(2, 32, 'ZZ')");
+        addInAccountTable(defaultDataSource, "(32, 'ZZ')");
         MatcherAssert.assertThat(getAccountTable().toString(), Matchers.containsString("ZZ"));
     }
 }

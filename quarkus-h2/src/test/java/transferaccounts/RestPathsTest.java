@@ -5,9 +5,13 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import org.apache.http.HttpStatus;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import java.math.BigInteger;
 
 @QuarkusTest
@@ -15,6 +19,14 @@ public class RestPathsTest {
 
     @Inject
     AgroalDataSource defaultDataSource;
+    @Inject
+    EntityManager em;
+
+    @AfterEach
+    public void tearDown(){
+//        em.createQuery("TRUNCATE TABLE Account").executeUpdate();
+        SqlViaDataSourceTest.cleanAccounts(defaultDataSource);
+    }
 
     @Test
     public void post() {
@@ -38,9 +50,8 @@ public class RestPathsTest {
     }
 
     @Test
-    public void getKnown() {
+    public void getKnownUsingAgroalDataSource() {
         BigInteger id = SqlViaDataSourceTest.addInAccountTable(defaultDataSource, "(666, 'UU')");
-//        em.persist(new Account("hi",1));
         RestAssured.given()
                 .when().get("/accounts/" + id)
                 .then()
@@ -49,7 +60,7 @@ public class RestPathsTest {
     }
 
     @Test
-    public void findAll() {
+    public void findAllUsingAgroalDataSource() {
         BigInteger id1 = SqlViaDataSourceTest.addInAccountTable(defaultDataSource, "(333, 'A')");
         BigInteger id2 = SqlViaDataSourceTest.addInAccountTable(defaultDataSource, "(666, 'B')");
         RestAssured.given()
