@@ -14,7 +14,7 @@ import java.util.List;
 @Path("/accounts")
 @Produces(MediaType.APPLICATION_JSON)
 @Singleton
-public class RestPaths {
+public class AccountPaths {
     private static final Logger logger = Logger.getLogger(MethodHandles.lookup().lookupClass());
 
     @Inject
@@ -22,9 +22,9 @@ public class RestPaths {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Uni<BigInteger> create(Account account) {
-        logger.infov("Account is created: {0}", account);
-        return Uni.createFrom().item(db.save(account));
+    public Uni<List<BigInteger>> createAll(List<Account> accounts) {
+        logger.infov("Accounts creation");
+        return Uni.createFrom().item(db.saveAll(accounts));
     }
 
     @GET

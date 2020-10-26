@@ -15,29 +15,39 @@ import javax.persistence.EntityManager;
 import java.math.BigInteger;
 
 @QuarkusTest
-public class RestPathsTest {
+public class AccountPathsTest {
 
     @Inject
     AgroalDataSource defaultDataSource;
-    @Inject
-    EntityManager em;
 
-    @AfterEach
-    public void tearDown(){
+    @BeforeEach
+    public void setup(){
 //        em.createQuery("TRUNCATE TABLE Account").executeUpdate();
         SqlViaDataSourceTest.cleanAccounts(defaultDataSource);
     }
 
     @Test
     public void post() {
-        String jsonString = "{\"amount\":321,\"name\":\"hello\"}";
+        String jsonString = "[{\"amount\":321,\"name\":\"hello\"}]";
         RestAssured.given()
                 .header("Content-Type", "application/json")
                 .body(jsonString)
                 .when().post("/accounts")
                 .then()
                 .statusCode(200)
-                .body(Matchers.matchesPattern("\\d+"));
+                .body(Matchers.matchesPattern("\\[\\d+\\]"));
+    }
+
+    @Test
+    public void postAll() {
+        String jsonString = "[{\"amount\":321,\"name\":\"a\"},{\"amount\":123,\"name\":\"b\"}]";
+        RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body(jsonString)
+                .when().post("/accounts")
+                .then()
+                .statusCode(200)
+                .body(Matchers.matchesPattern("\\[(\\d,?)+\\]"));
     }
 
     @Test
@@ -56,7 +66,7 @@ public class RestPathsTest {
                 .when().get("/accounts/" + id)
                 .then()
                 .statusCode(HttpStatus.SC_OK)
-                .body(Matchers.equalTo("{\"amount\":666,\"id\":" + id + ",\"name\":\"UU\"}"));
+                .body(Matchers.equalTo("{\"amount\":666.00,\"id\":" + id + ",\"name\":\"UU\"}"));
     }
 
     @Test
@@ -68,6 +78,6 @@ public class RestPathsTest {
                 .then()
                 .statusCode(HttpStatus.SC_OK)
                 .body(Matchers.equalTo(
-                        "[{\"amount\":333,\"id\":" + id1 + ",\"name\":\"A\"},{\"amount\":666,\"id\":" + id2 + ",\"name\":\"B\"}]"));
+                        "[{\"amount\":333.00,\"id\":" + id1 + ",\"name\":\"A\"},{\"amount\":666.00,\"id\":" + id2 + ",\"name\":\"B\"}]"));
     }
 }

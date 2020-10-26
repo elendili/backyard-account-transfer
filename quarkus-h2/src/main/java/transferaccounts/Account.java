@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Objects;
 
@@ -15,7 +16,7 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public BigInteger id;
     public String name;
-    public long amount;
+    public BigDecimal amount;
 
     public Account() {
     }
@@ -23,7 +24,7 @@ public class Account {
     @JsonbCreator
     public Account(
             @JsonbProperty("name") String name,
-            @JsonbProperty("amount") long amount
+            @JsonbProperty("amount") BigDecimal amount
     ) {
         this.name = name;
         this.amount = amount;
@@ -42,7 +43,7 @@ public class Account {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Account account = (Account) o;
-        return amount == account.amount &&
+        return Objects.equals(amount,account.amount) &&
                 Objects.equals(name, account.name);
     }
 

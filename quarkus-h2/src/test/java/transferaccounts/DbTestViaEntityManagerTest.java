@@ -1,8 +1,10 @@
 package transferaccounts;
 
+import io.agroal.api.AgroalDataSource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
@@ -16,6 +18,15 @@ public class DbTestViaEntityManagerTest {
 
     @Inject
     EntityManager em;
+
+    @Inject
+    AgroalDataSource defaultDataSource;
+
+
+    @BeforeEach
+    public void setup(){
+        SqlViaDataSourceTest.cleanAccounts(defaultDataSource);
+    }
 
     @Test
     @Transactional
