@@ -10,5 +10,5 @@ pluginManagement {
 }
 rootProject.name = 'train-project-account-transfer'
 include 'quarkus-h2'
-
+include 'revolut-interview-loadbalancer'
 
